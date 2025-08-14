@@ -1,4 +1,4 @@
-package com.favoriteproducts.api.domain.port.out;
+package com.favoriteproducts.api.domain.port;
 
 import com.favoriteproducts.api.domain.model.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;

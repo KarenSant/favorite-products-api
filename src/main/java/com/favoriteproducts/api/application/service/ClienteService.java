@@ -1,8 +1,9 @@
 package com.favoriteproducts.api.application.service;
 
 import com.favoriteproducts.api.adapter.in.dto.ClienteDTO;
+import com.favoriteproducts.api.application.mapper.ClienteMapper;
 import com.favoriteproducts.api.domain.model.Cliente;
-import com.favoriteproducts.api.domain.port.out.ClienteRepository;
+import com.favoriteproducts.api.domain.port.ClienteRepository;
 import com.favoriteproducts.api.exception.ResourceNotFoundException;
 import com.favoriteproducts.api.util.LogUtil;
 import org.slf4j.Logger;
@@ -15,7 +16,6 @@ import java.util.stream.Collectors;
 public class ClienteService {
 
     private static final Logger logger = LogUtil.getLogger(ClienteService.class);
-
     private final ClienteRepository clienteRepository;
 
     public ClienteService(ClienteRepository clienteRepository) {
@@ -24,68 +24,71 @@ public class ClienteService {
 
     public ClienteDTO criarCliente(ClienteDTO clienteDTO) {
         logger.info("Criando cliente com e-mail: {}", clienteDTO.getEmail());
-        if (clienteRepository.findByEmail(clienteDTO.getEmail()).isPresent()) {
-            logger.error("E-mail já cadastrado: {}", clienteDTO.getEmail());
-            throw new IllegalArgumentException("E-mail já cadastrado.");
-        }
+        validarEmailDuplicado(clienteDTO.getEmail());
 
-        Cliente cliente = toEntity(clienteDTO);
+        Cliente cliente = ClienteMapper.toEntity(clienteDTO);
         Cliente clienteSalvo = clienteRepository.save(cliente);
+
         logger.info("Cliente criado com sucesso: {}", clienteSalvo.getId());
-        return toDTO(clienteSalvo);
+        return ClienteMapper.toDTO(clienteSalvo);
     }
 
     public List<ClienteDTO> listarClientes() {
         logger.info("Listando todos os clientes.");
-        return clienteRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+        return clienteRepository.findAll()
+                .stream()
+                .map(ClienteMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     public ClienteDTO buscarClientePorId(Long id) {
         logger.info("Buscando cliente com ID: {}", id);
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
+        Cliente cliente = obterClientePorId(id);
+
         logger.info("Cliente encontrado: {}", cliente.getId());
-        return toDTO(cliente);
+        return ClienteMapper.toDTO(cliente);
     }
 
     public ClienteDTO atualizarCliente(Long id, ClienteDTO clienteAtualizado) {
         logger.info("Atualizando cliente com ID: {}", id);
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
+        Cliente cliente = obterClientePorId(id);
 
-        cliente.setUsername(clienteAtualizado.getUsername() != null ? clienteAtualizado.getUsername() : cliente.getUsername());
-        cliente.setEmail(clienteAtualizado.getEmail() != null ? clienteAtualizado.getEmail() : cliente.getEmail());
-        cliente.setPassword(clienteAtualizado.getPassword() != null ? clienteAtualizado.getPassword() : cliente.getPassword());
+        atualizarDadosCliente(cliente, clienteAtualizado);
 
         Cliente clienteSalvo = clienteRepository.save(cliente);
         logger.info("Cliente atualizado com sucesso: {}", clienteSalvo.getId());
-        return toDTO(clienteSalvo);
+        return ClienteMapper.toDTO(clienteSalvo);
     }
 
     public void removerCliente(Long id) {
         logger.info("Removendo cliente com ID: {}", id);
-        if (!clienteRepository.existsById(id)) {
-            logger.error("Cliente não encontrado com ID: {}", id);
-            throw new ResourceNotFoundException("Cliente não encontrado com ID: " + id);
-        }
-        clienteRepository.deleteById(id);
+        Cliente cliente = obterClientePorId(id);
+
+        clienteRepository.delete(cliente);
         logger.info("Cliente removido com sucesso: {}", id);
     }
 
-    private ClienteDTO toDTO(Cliente cliente) {
-        ClienteDTO dto = new ClienteDTO();
-        dto.setId(cliente.getId());
-        dto.setUsername(cliente.getUsername());
-        dto.setEmail(cliente.getEmail());
-        dto.setPassword(cliente.getPassword());
-        return dto;
+    private void validarEmailDuplicado(String email) {
+        if (clienteRepository.findByEmail(email).isPresent()) {
+            logger.error("E-mail já cadastrado: {}", email);
+            throw new IllegalArgumentException("E-mail já cadastrado.");
+        }
     }
 
-    private Cliente toEntity(ClienteDTO dto) {
-        Cliente cliente = new Cliente();
-        cliente.setUsername(dto.getUsername());
-        cliente.setEmail(dto.getEmail());
-        cliente.setPassword(dto.getPassword());
-        return cliente;
+    private Cliente obterClientePorId(Long id) {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
+    }
+
+    private void atualizarDadosCliente(Cliente cliente, ClienteDTO clienteAtualizado) {
+        if (clienteAtualizado.getUsername() != null) {
+            cliente.setUsername(clienteAtualizado.getUsername());
+        }
+        if (clienteAtualizado.getEmail() != null) {
+            cliente.setEmail(clienteAtualizado.getEmail());
+        }
+        if (clienteAtualizado.getPassword() != null) {
+            cliente.setPassword(clienteAtualizado.getPassword());
+        }
     }
 }

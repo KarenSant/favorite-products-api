@@ -1,9 +1,6 @@
 package com.favoriteproducts.api.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,13 +10,15 @@ import lombok.Setter;
 public class ProdutoFavorito {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String titulo;
-    private String imagem;
-    private String categoria;
-    private String descricao;
-    private Double preco;
+    private String title;
+    private Double price;
+    private String description;
+    private String category;
+    private String image;
+    private String review;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
@@ -27,15 +26,14 @@ public class ProdutoFavorito {
 
     @Override
     public String toString() {
-        return "FavoriteProduct{" +
+        return "ProdutoFavorito{" +
                 "id=" + id +
-                "titulo='" + titulo + '\'' +
-                ", imagem='" + imagem + '\'' +
-                ", categoria='" + categoria + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", preco=" + preco +
+                ", title='" + title + '\'' +
+                ", price='" + price + '\'' +
+                ", description='" + description + '\'' +
+                ", category='" + category + '\'' +
+                ", image='" + image + '\'' +
                 ", cliente=" + (cliente != null ? cliente.getId() : "null") +
                 '}';
     }
-
 }

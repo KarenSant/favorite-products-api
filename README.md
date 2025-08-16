@@ -42,7 +42,7 @@ src
 └── util         # Utilitários
 ```
 
-## ⚙ Como Rodar
+## ► Run
 - Clonar o projeto:
 
 ```bash

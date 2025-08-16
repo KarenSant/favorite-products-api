@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
     @Bean
     public OpenAPI api() {
-        return new OpenAPI().info(new Info().title("Customers & Favorites API")
+        return new OpenAPI().info(new Info().title("Favorite Products API")
                 .description("API RESTful com clientes e favoritos, integração FakeStore, " +
                         "JWT e arquitetura hexagonal")
                 .version("1.0.0"));

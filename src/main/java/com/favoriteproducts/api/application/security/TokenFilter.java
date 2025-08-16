@@ -17,18 +17,36 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Filtro responsável por interceptar requisições HTTP e validar o token JWT.
+ * Caso o token seja válido, autentica o usuário no contexto de segurança do Spring.
+ */
 @Component
-//@RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final ApplicationContext context;
 
+    /**
+     * Construtor da classe TokenFilter.
+     *
+     * @param jwtService Serviço responsável por validar e extrair informações do token JWT.
+     * @param context Contexto da aplicação para obter o UserDetailsService.
+     */
     public TokenFilter(JwtService jwtService, ApplicationContext context) {
         this.jwtService = jwtService;
         this.context = context;
     }
 
+    /**
+     * Método que intercepta a requisição, valida o token JWT e autentica o usuário.
+     *
+     * @param req Objeto da requisição HTTP.
+     * @param res Objeto da resposta HTTP.
+     * @param chain Cadeia de filtros para continuar o processamento.
+     * @throws ServletException Em caso de erro no processamento do filtro.
+     * @throws IOException Em caso de erro de I/O.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
@@ -49,26 +67,3 @@ public class TokenFilter extends OncePerRequestFilter {
         chain.doFilter(req, res);
     }
 }
-
-//    private final JwtService jwtService;
-//    private final @Lazy UserDetailsService uds;
-//
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
-//            throws ServletException, IOException {
-//        String auth = req.getHeader("Authorization");
-//        if (auth != null && auth.startsWith("Bearer ")) {
-//            String token = auth.substring(7);
-//            try {
-//                String user = jwtService.validateAndGetSubject(token);
-//                UserDetails ud = uds.loadUserByUsername(user);
-//                var authToken = new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-//                        ud, null, ud.getAuthorities());
-//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-//                SecurityContextHolder.getContext().setAuthentication(authToken);
-//            } catch (Exception ignored) {
-//            }
-//        }
-//        chain.doFilter(req, res);
-//    }
-//}

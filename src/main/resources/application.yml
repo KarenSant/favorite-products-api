@@ -1,0 +1,33 @@
+server:
+  port: ${SERVER_PORT:8080} # Porta do servidor com fallback para 8080
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/favorite-api} # URL do banco de dados com fallback
+    username: ${DB_USERNAME:postgres} # Nome de usuário do banco de dados com fallback
+    password: ${DB_PASSWORD:admin} # Senha do banco de dados com fallback
+    driver-class-name: org.postgresql.Driver # Driver do PostgreSQL
+  jpa:
+    hibernate:
+      ddl-auto: update # Atualiza o esquema do banco de dados automaticamente
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true # Formata as queries SQL no log
+    show-sql: true # Exibe as queries SQL no log
+
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:12345678901234567890123456789012} # Chave JWT com fallback
+      expirationSeconds: 100000000 # Expiração do token em segundos
+  external:
+    fakestore:
+      baseUrl: https://fakestoreapi.com # URL da API externa
+
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG
+    org.springframework.security: INFO
+    org.springframework.web.reactive.function.client.ExchangeFunctions: WARN

@@ -1,42 +1,30 @@
 package com.favoriteproducts.api.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
+@Schema(description = "Representa um cliente no sistema.")
 public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Identificador único do cliente.", example = "1")
     private Long id;
 
-    @NotBlank(message = "A senha é obrigatória.")
     @Column(nullable = false)
-    private String password;
-
-    @NotBlank(message = "O username é obrigatório.")
-    @Column(nullable = false)
-    private String username;
+    @Schema(description = "Nome do cliente.", example = "João Silva")
+    private String name;
 
     @Email(message = "E-mail inválido.")
-    @NotBlank(message = "O e-mail é obrigatório.")
     @Column(nullable = false, unique = true)
+    @Schema(description = "E-mail do cliente.", example = "joao.silva@email.com")
     private String email;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProdutoFavorito> produtosFavoritos = new ArrayList<>();
-
-
 }

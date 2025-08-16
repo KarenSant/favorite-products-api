@@ -16,7 +16,7 @@ public class ProdutoRepositoryAdapter implements ProdutoRepositoryPort {
     private final ProdutoRepository repo;
 
     public Optional<Produto> findByClientAndProductId(Cliente cliente, Long productId) {
-        return repo.findByClienteAndProductId(cliente, productId);
+        return repo.findByClienteAndId(cliente, productId);
     }
 
     public Produto save(Produto p) {

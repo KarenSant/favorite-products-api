@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
-    Optional<Produto> findByClienteAndProductId(Cliente cliente, Long productId);
+    Optional<Produto> findByClienteAndId(Cliente cliente, Long id);
 
     List<Produto> findByClienteId(Long clientId);
 }

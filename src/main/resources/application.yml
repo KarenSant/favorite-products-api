@@ -1,0 +1,37 @@
+# Configurações do servidor
+  server:
+    port: ${SERVER_PORT:8080} # Porta na qual o servidor será executado. Usa a variável de ambiente SERVER_PORT ou 8080 como padrão.
+
+  # Configurações do banco de dados
+  spring:
+    datasource:
+      url: ${DB_URL:jdbc:postgresql://localhost:5432/favorite-api} # URL de conexão com o banco de dados. Usa a variável DB_URL ou um valor padrão.
+      username: ${DB_USERNAME:YOUR_USERNAME} # Nome de usuário do banco de dados. Usa a variável DB_USERNAME ou um valor padrão.
+      password: ${DB_PASSWORD:YOUR_PASSWORD} # Senha do banco de dados. Usa a variável DB_PASSWORD ou um valor padrão.
+      driver-class-name: org.postgresql.Driver # Driver JDBC utilizado para o PostgreSQL.
+    jpa:
+      hibernate:
+        ddl-auto: update # Configuração para atualização automática do esquema do banco de dados.
+      open-in-view: false # Desativa o Open Session in View para evitar problemas de desempenho.
+      properties:
+        hibernate:
+          format_sql: true # Formata as consultas SQL para facilitar a leitura.
+      show-sql: true # Exibe as consultas SQL no console.
+
+  # Configurações específicas da aplicação
+  app:
+    security:
+      jwt:
+        secret: ${JWT_SECRET:12345678901234567890123456789012} # Chave secreta para geração e validação de tokens JWT. Usa a variável JWT_SECRET ou um valor padrão.
+        expirationSeconds: 100000000 # Tempo de expiração do token JWT em segundos.
+    external:
+      fakestore:
+        baseUrl: https://fakestoreapi.com # URL base da API externa Fake Store.
+
+  # Configurações de logging
+  logging:
+    level:
+      root: INFO # Nível de log padrão para toda a aplicação.
+      com.example: DEBUG # Nível de log para pacotes específicos.
+      org.springframework.security: INFO # Nível de log para segurança do Spring.
+      org.springframework.web.reactive.function.client.ExchangeFunctions: WARN # Nível de log para requisições reativas.
